@@ -6,7 +6,7 @@ const app = express();  //create express object. Object is also a valid paramete
 //5 overloads of use() function, read doc to learn more
 
 app.use('/', (req, res, next)=>{
-	/......                               this code always runs
+	//......                              this code always runs
 	next();                             //next() to move to next middleware after this
 });
 
