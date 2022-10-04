@@ -6,7 +6,7 @@ const app = express();
 
 app.use(bodyParser.urlencoded({extended: false}));  //parse the body array in streams and buffer model like we did before but now it's automatic
 
-app.use('/add-product', (req, res, next)=>{ 
+app.post('/add-product', (req, res, next)=>{        //app.post() function only run when the url is access with post method
 	res.send('<form action="/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>');      
 });                            
 
