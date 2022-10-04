@@ -1,24 +1,22 @@
 
 const express = require('express');
+const bodyParser = require('body-parser');      //install with npm install --save body-parser
 
-const app = express();  //create express object. Object is also a valid parameter for create server
+const app = express();  
 
-//5 overloads of use() function, read doc to learn more
+app.use(bodyParser.urlencoded({extended: false}));  //parse the body array in streams and buffer model like we did before but now it's automatic
 
-app.use('/', (req, res, next)=>{
-	//......                              this code always runs
-	next();                             //next() to move to next middleware after this
+app.use('/add-product', (req, res, next)=>{ 
+	res.send('<form action="/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>');      
+});                            
+
+app.use('/product', (req, res, next)=>{
+	console.log(req.body);                          //req.body is a null prototype object, so it does not have the default object functions like
+	                                                //toString(),...
+	res.redirect('/');                              //redirect the page to '/'
 });
 
-
-app.use('/add-product', (req, res, next)=>{ //this runs first   
-	res.send('<h1>Add Produc Page</h1>');   //Handles request for route that starts with '/add-product'        
-});                                         //Does not have next() so the middleware under does not execute after this. 
-
-
-//Generally don't want next() after code that writes responses, like no writing after end(). 
-
-app.use('/', (req, res, next)=>{            //handle request for every route that starts with '/'  
+app.use('/', (req, res, next)=>{            
 	res.send('<h1>Hello</h1>');             
 });
 
