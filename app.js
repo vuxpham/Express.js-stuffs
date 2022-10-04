@@ -1,4 +1,3 @@
-const http = require('http');
 
 const express = require('express');
 
@@ -11,8 +10,8 @@ app.use((req, res, next)=>{              //Middleware
 
 app.use((req, res, next)=>{              //Another middleware
 	console.log("In another middleware");
+	res.send('<h1>Hello</h1>');
 });
 
-const server = http.createServer();
-
-server.listen(3000);
+app.listen(3000);                        //the app function intializes a server object and passes in app function -> no need to create
+                                         //server ourselves
