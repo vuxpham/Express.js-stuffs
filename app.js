@@ -9,6 +9,9 @@ const app = express();
 
 app.use(bodyParser.urlencoded({extended: false}));  
 
+app.use(express.static(path.join(__dirname, 'public'))); //Grant read only access to the static folder public (accessing
+                                                         //directly through the path in the files
+														 
 app.use('/admin', adminRoutes);   //only addresses with '/admin' can run this code
 
 app.use(shopRoutes);
