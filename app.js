@@ -7,6 +7,9 @@ const shopRoutes = require('./routes/shop');
 
 const app = express();  
 
+app.set('view engine', 'pug'); //Uses package 'pug' for view engine. 
+app.set('views', 'views');     //Access folder for the application's views
+
 app.use(bodyParser.urlencoded({extended: false}));  
 
 app.use(express.static(path.join(__dirname, 'public'))); //Grant read only access to the static folder public (accessing
