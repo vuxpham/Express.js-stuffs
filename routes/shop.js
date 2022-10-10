@@ -6,8 +6,9 @@ const adminData = require('./admin');
 
 const router = express.Router();
 
-router.get('/', (req, res, next)=>{     
-	res.render('shop'); //Already defined 'views' folder and 'pug' engine => automatically look for 'shop.pug' file in 'views' folder           
+router.get('/', (req, res, next)=>{
+	const products = adminData.products;
+	res.render('shop', {prods: products, docTitle: 'Shop'}); //Pass in an object that the .pug file can use         
 });
 
 module.exports = router;
