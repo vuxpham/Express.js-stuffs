@@ -4,12 +4,10 @@ const path = require('path');
 
 const adminData = require('./routes/admin');   
 const shopRoutes = require('./routes/shop');
-const expressHbs = require('express-handlebars');   //Import handlebars package
 
 const app = express();  
 
-app.engine('handlebars', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main-layout'}));  
-app.set('view engine', 'handlebars'); 
+app.set('view engine', 'ejs'); 
 app.set('views', 'views');     //Access folder for the application's views
 
 app.use(bodyParser.urlencoded({extended: false}));  
