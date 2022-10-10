@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/', (req, res, next)=>{
 	const products = adminData.products;
-	res.render('shop', {prods: products, pageTitle: 'Shop', path: '/'}); //Pass in an object that the .pug file can use         
+	res.render('shop', {prods: products, pageTitle: 'Shop', path: '/', hasProducts: products.length > 0}); //handlebars cannot handle statements, only values       
 });
 
 module.exports = router;

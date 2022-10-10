@@ -4,10 +4,12 @@ const path = require('path');
 
 const adminData = require('./routes/admin');   
 const shopRoutes = require('./routes/shop');
+const expressHbs = require('express-handlebars');   //Import handlebars package
 
 const app = express();  
 
-app.set('view engine', 'pug'); //Uses package 'pug' for view engine. 
+app.engine('handlebars', expressHbs());  //Create engine called 'handlebars' from object expressHbs
+app.set('view engine', 'handlebars'); 
 app.set('views', 'views');     //Access folder for the application's views
 
 app.use(bodyParser.urlencoded({extended: false}));  
