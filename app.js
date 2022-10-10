@@ -8,7 +8,7 @@ const expressHbs = require('express-handlebars');   //Import handlebars package
 
 const app = express();  
 
-app.engine('handlebars', expressHbs());  //Create engine called 'handlebars' from object expressHbs
+app.engine('handlebars', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main-layout'}));  
 app.set('view engine', 'handlebars'); 
 app.set('views', 'views');     //Access folder for the application's views
 
