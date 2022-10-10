@@ -20,7 +20,7 @@ app.use('/admin', adminData.routes);   //only addresses with '/admin' can run th
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
-	res.status(404).sendFile(path.join(__dirname, './', 'views', 'error.html'));     //Error page 
+	res.status(404).render('error');     //Error page 
 });
 
 app.listen(3000);                        
