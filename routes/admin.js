@@ -2,14 +2,16 @@ const express = require('express');
 const path = require('path');
 
 const rootDir = require('../utility/path');
-const productsController = require('../controllers/products');
+const adminController = require('../controllers/admin');
 
 const router = express.Router(); 
 
 const products = [];            
 
-router.get('/add-product', productsController.getAddProduct);  		//No () because we don't want to run the function, we just want to              
-																   //reference it
-router.post('/add-product', productsController.postAddProduct);
+router.get('/products', adminController.getAdminProducts);
+
+router.get('/add-product', adminController.getAddProduct);  		              
+																   
+router.post('/add-product', adminController.postAddProduct);
 
 module.exports = router;
