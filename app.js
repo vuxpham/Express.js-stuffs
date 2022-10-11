@@ -4,6 +4,7 @@ const path = require('path');
 
 const adminRoutes = require('./routes/admin');   
 const shopRoutes = require('./routes/shop');
+const errorController = require('./controllers/error');
 
 const app = express();  
 
@@ -19,8 +20,6 @@ app.use('/admin', adminRoutes);   //only addresses with '/admin' can run this co
 
 app.use(shopRoutes);
 
-app.use((req, res, next) => {
-	res.status(404).render('error', {pageTitle: 'Page not found'});     //Error page 
-});
+app.use(errorController.getError);
 
 app.listen(3000);                        
