@@ -37,6 +37,7 @@
     "pug": "^3.0.2",
     "readdirp": "^3.6.0",
     "semver": "^5.7.1",
+    "sequelize": "^6.25.2",
     "simple-update-notifier": "^1.0.7",
     "supports-color": "^5.5.0",
     "to-regex-range": "^5.0.1",
