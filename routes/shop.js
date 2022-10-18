@@ -13,12 +13,10 @@ router.post('/cart', shopController.postCart);
 
 router.post('/cart-delete-item', shopController.postCartDeleteProduct);
 
-router.get('/checkout', shopController.getCheckout);
-
 router.get('/products/:productId', shopController.getProductDetail); 	// Tells express to look for variable productID. Must be after other 
 																		// /products/... becaause it counts this as a unique request and won't 
 																		// run the other /products/.. requests after.
-
+router.post('/create-order', shopController.postOrder);
 
 
 router.get('/', shopController.getIndex);

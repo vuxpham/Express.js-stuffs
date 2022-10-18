@@ -1,6 +1,4 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
-
 
 exports.getProducts = (req, res, next)=>{
 	Product.findAll()
@@ -91,12 +89,45 @@ exports.getIndex = (req, res, next) => {
 		});
 };
 
-exports.getCheckout = (req, res, next) => {
-	res.render('shop/checkout', {pageTitle: 'Checkout', path: '/checkout'});
+exports.postOrder = (req, res, next) => {
+	let fetchedCart;
+	req.user.getCart()
+		.then(cart => {
+			fetchedCart = cart;
+			return cart.getProducts();
+		})
+		.then(products => {
+			return req.user.createOrder()
+				.then(order => {
+					return order.addProducts(
+						products.map(product => {
+							product.orderItem = {quantity: product.cartItem.quantity};
+							return product;
+						}));
+				})
+				.catch(err => {console.log(err);});
+		})
+		.then(result => {
+			return fetchedCart.setProducts(null);
+		})
+		.then(result => {
+			res.redirect('/orders');
+		})
+		.catch(err => {console.log(err);});
 };
 
 exports.getOrders = (req, res, next) => {
-	res.render('shop/orders', {pageTitle: 'Orders', path: '/orders'});
+	req.user.getOrders({include: ['products']}) //for each order in orders, also return the corresponding products (because 
+		.then(orders => {                       //product and order have association)
+			res.render('shop/orders', {
+				pageTitle: 'Orders', 
+				path: '/orders',
+				orders: orders
+				});			
+		})
+		.catch(err => {
+			console.log(err);
+		});
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
@@ -116,3 +147,4 @@ exports.postCartDeleteProduct = (req, res, next) => {
 			console.log(err);
 		});
 };
+
