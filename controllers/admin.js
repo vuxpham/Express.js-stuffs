@@ -5,20 +5,20 @@ exports.getAddProduct = (req, res, next)=>{
 };
 
 exports.postAddProduct = (req, res, next)=>{  
-	Product.create({
+	req.user.createProduct({                        //method automatically added by sequelize when creating associations
 		title: req.body.title,
 		price: req.body.price,
 		imageURL: req.body.imageURL,
 		description: req.body.description
-	})
-	.then(result => {
-		res.redirect('/admin/products');
-	})
-	.catch(err => {console.log(err);});
+		})
+		.then(result => {
+			res.redirect('/admin/products');
+		})
+		.catch(err => {console.log(err);});
 };
 
 exports.getAdminProducts = (req, res, next) => {
-	Product.findAll()
+	req.user.getProducts()
 		.then(products => {
 			res.render('admin/products', {
 				prods: products, 
@@ -37,8 +37,9 @@ exports.getEditProduct = (req, res, next)=>{
 		return res.redirect('/');
 	}
 	const prodId = req.params.productId;
-	Product.findByPk(prodId)
-		.then(product => {
+	req.user.getProducts({where: {id: prodId}})
+		.then(products => {
+			const product = products[0];
 			if(!product){
 				return res.redirect('/');
 			}
