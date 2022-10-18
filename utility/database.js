@@ -1,10 +1,17 @@
-const Sequelize = require('sequelize');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
 
-//Constructor creates a pool connection with the database from localhost
+const mongoConnect = (callback) => {
+	MongoClient.connect('mongodb+srv://vupa2810:bong2003@cluster0.isx1j9n.mongodb.net/?retryWrites=true&w=majority')
+		.then(client => {
+			console.log('Connected!');
+			callback(client);
+		})
+		.catch(err => {
+			console.log(err);
+		});
+};
 
-const sequelize = new Sequelize('node-complete', 'root', 'bong2003', {
-	dialect: 'mysql', 
-	host: 'localhost'
-});
+module.exports = mongoConnect;
 
-module.exports = sequelize;
+	
