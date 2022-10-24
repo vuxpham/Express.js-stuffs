@@ -1,10 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');   
+const mongoose = require('mongoose');
 
-
-
-const mongoConnect = require('./utility/database').mongoConnect;
 const User = require('./models/user');
 
 const app = express();  
@@ -21,9 +19,9 @@ app.use(express.static(path.join(__dirname, 'public'))); //Grant read only acces
                                                          //directly through the path in the files
 
 app.use((req, res, next) => {
-	User.findById("63520f933de338d3b1edd798")
+	User.findById("6356333170c7b51219b99219")
 		.then(user => {
-			req.user = new User(user.name, user.email, user.cart, user._id);         
+			req.user = user;         
 			next();
 		})
 		.catch(err => {
@@ -36,6 +34,22 @@ app.use(shopRoutes);
 
 app.use(errorController.getError);
 
-mongoConnect(() => {
-	app.listen(3000);
-});
+mongoose.connect('mongodb+srv://vupa2810:bong2003@cluster0.isx1j9n.mongodb.net/shop?retryWrites=true&w=majority')
+	.then(result => {
+		User.findOne().then(user => {
+			if(!user){
+				const user = new User({
+					name: 'Vu',
+					email: 'test@gmail.com',
+					cart: {
+						items: []
+					}
+				});
+				user.save();
+			}
+		})
+		app.listen(3000);
+	})
+	.catch(err => {
+		console.log(err);
+	});
