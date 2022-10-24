@@ -1,32 +1,100 @@
-const Sequelize = require('sequelize');
+const mongodb = require('mongodb');
 
-const sequelize = require('../utility/database');
+const getDb = require('../utility/database').getDb;
 
-const Product = sequelize.define(
-	'product', {
-		id: {
-			type: Sequelize.INTEGER,
-			autoIncrement: true,
-			allowNull: false,
-			primaryKey: true
-		},
-		title: {
-			type: Sequelize.STRING,
-			allowNull: false
-		},
-		price: {
-			type: Sequelize.DOUBLE,
-			allowNull: false
-		},
-		imageURL: {
-			type: Sequelize.STRING,
-			allowNull: false
-		},
-		description: {
-			type: Sequelize.STRING,
-			allowNull: false
+class Product {
+	constructor(title, price, imageURL, description, id, userId){
+		this.title = title;
+		this.price = price;
+		this.imageURL = imageURL;
+		this.description = description;
+		this._id = id ? new mongodb.ObjectId(id) : null; 	//If id is null return null object as id
+		this.userId = userId;                               //If id not null, create ObjectId with that id
+	}                                                    	  
+	
+	
+	save(){
+		const db = getDb();
+		let dbOp;
+		if (this._id) {
+			dbOp = db
+			.collection('products')
+			.updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
+		} else {
+			dbOp = db.collection('products').insertOne(this);
 		}
+		return dbOp
+		.then(result => {
+			console.log(result);
+		})
+		.catch(err => {
+			console.log(err);
+		});
 	}
-);
+	
+	static fetchAll(){
+		const db = getDb();
+		return db.collection('products').find().toArray()   //Should only do this with <100 records
+			.then(products => {                             //find method returns a cursor object
+				console.log(products);
+				return products;
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
+	
+	static findById(prodId){
+		const db = getDb();
+		return db.collection('products').find({ _id: new mongodb.ObjectId(prodId) })
+			.next()
+			.then(product => {
+				console.log(product);
+				return product;
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
+	
+	static deleteById(prodId){
+		const db = getDb();
+		return db.collection('products')
+			.deleteOne({_id: new mongodb.ObjectId(prodId)})
+			.then(result => {
+				console.log('Deleted!');
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
+}
+
+// const Product = sequelize.define(
+	// 'product', {
+		// id: {
+			// type: Sequelize.INTEGER,
+			// autoIncrement: true,
+			// allowNull: false,
+			// primaryKey: true
+		// },
+		// title: {
+			// type: Sequelize.STRING,
+			// allowNull: false
+		// },
+		// price: {
+			// type: Sequelize.DOUBLE,
+			// allowNull: false
+		// },
+		// imageURL: {
+			// type: Sequelize.STRING,
+			// allowNull: false
+		// },
+		// description: {
+			// type: Sequelize.STRING,
+			// allowNull: false
+		// }
+	// }
+// );
 
 module.exports = Product;
