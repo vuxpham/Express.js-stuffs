@@ -1,11 +1,10 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next)=>{        
-	res.render('admin/edit-product', {pageTitle: 'Add Product', path: '/admin/add-product', editing: false});
+	res.render('admin/edit-product', {pageTitle: 'Add Product', path: '/admin/add-product', editing: false, isAuthenticated: req.session.isLoggedIn});
 };
 
 exports.postAddProduct = (req, res, next)=>{  
-	console.log(req.user);
 	const product = new Product({
 		title: req.body.title, 
 		price: req.body.price, 
@@ -49,7 +48,7 @@ exports.getEditProduct = (req, res, next)=>{
 			if(!product){
 				return res.redirect('/');
 			}
-			res.render('admin/edit-product', {pageTitle: 'Edit Product', path: '/admin/edit-product', editing: editMode, product: product});
+			res.render('admin/edit-product', {pageTitle: 'Edit Product', path: '/admin/edit-product', editing: editMode, product: product, isAuthenticated: req.session.isLoggedIn});
 		})
 		.catch(err => {
 			console.log(err);
@@ -65,7 +64,6 @@ exports.postEditProduct = (req, res, next) => {
 		product.save()
 	})
 	.then(result => {
-	  console.log('UPDATED PRODUCT!');
 	  res.redirect('/admin/products');
 	})
 	.catch(err => console.log(err));
