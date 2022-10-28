@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
 
 const User = require('../models/user'); 
 
@@ -13,7 +14,9 @@ exports.getLogin = (req, res, next) => {
 	res.render('auth/login', {
 		path: '/login',
 		pageTitle: 'Login',
-		errorMessage: message
+		errorMessage: message,
+		oldInput: {email: '', password: ''},
+		validationErrors: []
 	});
 };
 
@@ -28,18 +31,25 @@ exports.getSignUp = (req, res, next) => {
 	res.render('auth/signup', {
 		path: '/signup',
 		pageTitle: 'Sign Up',
-		errorMessage: message
+		errorMessage: message,
+		oldInput: {email: '', password: '', confirmPassword: ''},
+		validationErrors: []
 	});
 };
 
 exports.postSignUp = (req, res, next) => {
-	User.findOne({email: req.body.email})
-		.then(userData => {
-			if(userData){
-				req.flash('error', 'This email already exists!');
-				return res.redirect('/signup');
-			}
-			return bcrypt.hash(req.body.password, 12)        //Hash Password 12 times (12 is standard)
+	const errors = validationResult(req);
+	if(!errors.isEmpty()){
+		console.log(errors);
+		return res.status(422).render('auth/signup', {
+			path: '/signup',
+			pageTitle: 'Sign Up',
+			errorMessage: errors.array()[0].msg,
+			oldInput: {email: req.body.email, password: req.body.password, confirmPassword: req.body.confirmPassword},
+			validationErrors: errors.array()
+		});
+	}
+			bcrypt.hash(req.body.password, 12)        //Hash Password 12 times (12 is standard)
 				.then(hashedPassword => {
 					const user = new User({
 						email: req.body.email,
@@ -50,19 +60,33 @@ exports.postSignUp = (req, res, next) => {
 				})
 				.then(result => {
 					res.redirect('/login');
-				});       
-		})
-		.catch(err => {
-			console.log(err);
-		});
+				})
+				.catch(err => {
+					console.log(err);
+				});
 };
 
 exports.postLogin = (req, res, next) => {
+	const errors = validationResult(req);
+	if(!errors.isEmpty()){
+		return res.status(422).render('auth/login', {
+			path: '/login',
+			pageTitle: 'Login',
+			errorMessage: errors.array()[0].msg,
+			oldInput: {email: req.body.email, password: req.body.password},
+			validationErrors: errors.array()
+		});
+	}
 	User.findOne({email: req.body.email})
 		.then(user => {
 			if(!user){
-				req.flash('error', 'Invalid email or password!');
-				return res.redirect('/login');
+				return res.status(422).render('auth/login', {
+					path: '/login',
+					pageTitle: 'Login',
+					errorMessage: 'Incorrect email or password!',
+					oldInput: {email: req.body.email, password: req.body.password},
+					validationErrors: [{param: 'email', param: 'password'}]
+				});
 			}
 			bcrypt.compare(req.body.password, user.password)
 				.then(match => {
@@ -74,8 +98,13 @@ exports.postLogin = (req, res, next) => {
 							res.redirect('/');
 						});						
 					}
-					req.flash('error', 'Invalid email or password!');
-					res.redirect('/login');
+					return res.status(422).render('auth/login', {
+						path: '/login',
+						pageTitle: 'Login',
+						errorMessage: 'Incorrect email or password!',
+						oldInput: {email: req.body.email, password: req.body.password},
+						validationErrors: [{param: 'email', param: 'password'}]
+					});
 				})
 				.catch(err => {
 					console.log(err);
