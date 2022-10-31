@@ -13,10 +13,17 @@
                 <label for="title">Title</label>
                 <input class="<%= validationErrors.find(e => e.param === 'title') ? 'invalid' : '' %>" type="text" name="title" value="<%  if (editing || hasError) { %><%= product.title %><% } %>" id="title">
             </div>
-			<div class="form-control">
+			
+			<!--<div class="form-control">
                 <label for="imageURL">Image URL</label>
                 <input class="<%= validationErrors.find(e => e.param === 'imageURL') ? 'invalid' : '' %>" type="text" name="imageURL" value="<% if (editing || hasError) { %><%= product.imageURL %><% } %>" id="imageURL">
-            </div>
+            </div> -->
+			
+			<div class="form-control">
+				<label for="image">Image</label>
+				<input type="file" name="image" id="image">
+			</div>
+			
 			<div class="form-control">
                 <label for="price">Price</label>
                 <input class="<%= validationErrors.find(e => e.param === 'price') ? 'invalid' : '' %>" type="number" name="price" value="<% if (editing || hasError) { %><%= product.price %><% } %>" id="price" step="0.01">
