@@ -6,6 +6,8 @@ const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
@@ -19,6 +21,24 @@ const store = new MongoDbStore({
 });
 const csrfProtection = csrf();      //Create csrf protection
 
+const fileStorage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, 'images');
+	},
+	filename: (req, file, cb) => {
+		cb(null, uuidv4() + '-' + file.originalname);
+	}
+});
+
+const fileFilter = (req, file, cb) => {
+	if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
+		cb(null, true);
+	}
+	else {
+		cb(null, false);
+	}
+};
+
 app.set('view engine', 'ejs'); 
 app.set('views', 'views');     //Access folder for the application's views
 
@@ -28,8 +48,11 @@ const authRoutes = require('./routes/auth');
 
 
 app.use(bodyParser.urlencoded({extended: false}));  
+app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));                        // Multer Processing Image Files
 app.use(express.static(path.join(__dirname, 'public'))); //Grant read only access to the static folder public (accessing
                                                          //directly through the path in the files
+														 
+app.use('/images', express.static(path.join(__dirname, 'images')));
 														 
 app.use(session({ 
 	secret: 'my secret', 

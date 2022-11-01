@@ -19,9 +19,6 @@ router.post('/add-product', isAuth, [
 		.isLength({min: 5})
 		.trim()
 		.withMessage("Product's title must be at least 5 characters long"),
-	body('imageURL')
-		.isURL()
-		.withMessage("Invalid Product URL"),
 	body('price')
 		.isFloat()
 		.withMessage("Invalid price"),
@@ -39,9 +36,6 @@ router.post('/edit-product', isAuth, [
 		.isLength({min: 5})
 		.trim()
 		.withMessage("Product's title must be at least 5 characters long"),
-	body('imageURL')
-		.isURL()
-		.withMessage("Invalid Product URL"),
 	body('price')
 		.isFloat()
 		.withMessage("Invalid price"),
